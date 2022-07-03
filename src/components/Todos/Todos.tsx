@@ -19,12 +19,12 @@ const Todos = () => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const newTodoRef: React.MutableRefObject<any> = useRef();
   const currentUser = useAuth();
+  const [highlightAll, setHighlightAll] = useState<boolean>(false);
+  const [highlightComplete, setHighlightComplete] = useState<boolean>(false);
+  const [highlightUncomplete, setHighlightUncomplete] =
+    useState<boolean>(false);
   const dispatch = useDispatch();
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
-  const name: string =
-    currentUser.displayName !== null
-      ? currentUser.displayName.split(" ")[0]
-      : "";
 
   const readTodos = async () => {
     const docRef = doc(db, "userData", uid);
@@ -77,12 +77,26 @@ const Todos = () => {
     readTodos();
   };
 
-  const filteredTodos = (completed: boolean) => {
+  const filteredTodos = (completed: boolean, init: boolean = false) => {
+    setHighlightAll(false);
+    setHighlightComplete(false);
+    setHighlightUncomplete(false);
+    if (init) {
+      setTodosArr(initTodosArr);
+      return;
+    }
+
     let newTodos: Todo[] = [];
     initTodosArr.forEach((todo) => {
       if (todo.done === true && completed) newTodos.push(todo);
       if (todo.done !== true && !completed) newTodos.push(todo);
     });
+
+    if (newTodos.length === 0) {
+      setHighlightAll(true);
+      if (completed) setHighlightUncomplete(true);
+      if (!completed) setHighlightComplete(true);
+    }
     setTodosArr(newTodos);
   };
 
@@ -161,24 +175,51 @@ const Todos = () => {
             )}
 
             <div className={todos.sort}>
-              <div
-                className={todos.sortButton}
-                onClick={() => setTodosArr(initTodosArr)}
-              >
-                all
-              </div>
-              <div
-                className={todos.sortButton}
-                onClick={() => filteredTodos(true)}
-              >
-                completed
-              </div>
-              <div
-                className={todos.sortButton}
-                onClick={() => filteredTodos(false)}
-              >
-                in progress
-              </div>
+              {highlightAll ? (
+                <div
+                  className={`${todos.sortButton} ${todos.highlightButton}`}
+                  onClick={() => filteredTodos(true, true)}
+                >
+                  all
+                </div>
+              ) : (
+                <div
+                  className={todos.sortButton}
+                  onClick={() => filteredTodos(true, true)}
+                >
+                  all
+                </div>
+              )}
+              {highlightComplete ? (
+                <div
+                  className={`${todos.sortButton} ${todos.highlightButton}`}
+                  onClick={() => filteredTodos(true)}
+                >
+                  completed
+                </div>
+              ) : (
+                <div
+                  className={`${todos.sortButton}`}
+                  onClick={() => filteredTodos(true)}
+                >
+                  completed
+                </div>
+              )}
+              {highlightUncomplete ? (
+                <div
+                  className={`${todos.sortButton} ${todos.highlightButton}`}
+                  onClick={() => filteredTodos(false)}
+                >
+                  in progress
+                </div>
+              ) : (
+                <div
+                  className={todos.sortButton}
+                  onClick={() => filteredTodos(false)}
+                >
+                  in progress
+                </div>
+              )}
             </div>
           </div>
           <div className={styles.grid}>

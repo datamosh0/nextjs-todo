@@ -12,10 +12,12 @@
   margin: 0.4rem;
   border-radius: 0.4rem;
 }
+
 .userImg {
   width: 2.5rem;
   border-radius: 100%;
 }
+
 .input {
   position: relative;
   width: 1.5em;
@@ -81,4 +83,8 @@
   border: 2px solid #0070f3;
   transform: translateY(-0.15rem);
   transition: ease-in-out 100ms;
+}
+
+.highlightButton {
+  box-shadow: 0 0 2px 2px #6497b1, 0 0 5px 5px #005b96, 0px 0px 2px 2px #03396c;
 }

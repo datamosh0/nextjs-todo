@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {};
 module.exports = {
+  /* config options here */
+
   reactStrictMode: false,
   compiler: {
     styledComponents: true,

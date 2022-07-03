@@ -30,14 +30,12 @@ function Login() {
     }
   };
   return (
-    <div className="App">
-      <div className="App__wrapper" style={{ display: "flex" }}>
-        <p className={styles.description} onClick={handleClick}>
-          <code className={styles.code} style={{ cursor: "pointer" }}>
-            Sign in with Google
-          </code>
-        </p>
-      </div>
+    <div>
+      <p className={styles.description} onClick={handleClick}>
+        <code className={styles.code} style={{ cursor: "pointer" }}>
+          Sign in with Google
+        </code>
+      </p>
     </div>
   );
 }

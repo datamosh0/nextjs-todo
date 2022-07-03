@@ -7,23 +7,19 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { IoIosAddCircle } from "react-icons/io";
 import { FcCancel } from "react-icons/fc";
+import { FiLogOut } from "react-icons/fi";
 import { uuidv4 } from "@firebase/util";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/userSlice";
 
-interface Todo {
-  todo: string;
-  done: boolean;
-}
 const Todos = () => {
   const [todosArr, setTodosArr] = useState<Todo[]>([]);
+  const [initTodosArr, setInitTodosArr] = useState<Todo[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [input, setInput] = useState<string>("");
   const [showInput, setShowInput] = useState<boolean>(false);
-  const [value, setValue] = useState(true);
-
   const newTodoRef: React.MutableRefObject<any> = useRef();
-  const inputRef: React.MutableRefObject<any> = useRef();
-
   const currentUser = useAuth();
+  const dispatch = useDispatch();
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
   const name: string =
     currentUser.displayName !== null
@@ -37,14 +33,11 @@ const Todos = () => {
     if (docSnap.exists()) {
       let data = docSnap.data();
       setTodosArr(data.todos);
+      setInitTodosArr(data.todos);
       setLoading(false);
     }
   };
-  const checkKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      addTodo();
-    }
-  };
+
   const addTodo = async () => {
     const newTodo: string = newTodoRef.current.value;
     let returnBool = false;
@@ -84,6 +77,15 @@ const Todos = () => {
     readTodos();
   };
 
+  const filteredTodos = (completed: boolean) => {
+    let newTodos: Todo[] = [];
+    initTodosArr.forEach((todo) => {
+      if (todo.done === true && completed) newTodos.push(todo);
+      if (todo.done !== true && !completed) newTodos.push(todo);
+    });
+    setTodosArr(newTodos);
+  };
+
   useEffect(() => {
     if (currentUser.email) {
       readTodos();
@@ -92,16 +94,48 @@ const Todos = () => {
 
   return (
     <>
+      <header className={styles.header}>
+        <div>Next.js Todo List</div>
+        <div className="flex items-center">
+          <div style={{ marginRight: "10px" }}>{currentUser.displayName}</div>
+          <img
+            className={todos.userImg}
+            src={`${currentUser.photoURL}`}
+            alt="alt"
+            referrerPolicy="no-referrer"
+          />
+          <FiLogOut
+            style={{ marginLeft: ".75rem", cursor: "pointer" }}
+            onClick={() => dispatch(logout())}
+          ></FiLogOut>
+        </div>
+      </header>
       {!loading && (
         <main>
           <div className={styles.description}>
-            <h2 className="pb-2 text-3xl">Hello, {name}</h2>
             <code
               className={styles.code}
               onClick={() => setShowInput(!showInput)}
             >
               {showInput ? (
-                "cancel"
+                <div className="flex ">
+                  <div
+                    style={{
+                      paddingRight: ".5rem",
+                      borderRight: "2px black solid",
+                    }}
+                  >
+                    cancel
+                  </div>
+                  <div
+                    onClick={addTodo}
+                    style={{
+                      paddingLeft: ".5rem",
+                    }}
+                  >
+                    submit
+                  </div>
+                </div>
               ) : (
                 <div className="flex items-center">
                   add a todo
@@ -114,26 +148,51 @@ const Todos = () => {
               <div className="flex items-center mt-3">
                 <input
                   type="text"
-                  className="border-2 border-black  p-1"
-                  placeholder="press enter to submit "
+                  className={todos.addInput}
+                  placeholder="press enter to submit"
                   ref={newTodoRef}
-                  onKeyUp={checkKeyPress}
+                  onKeyUp={(e) => {
+                    if (e.key === "Enter") {
+                      addTodo();
+                    }
+                  }}
                 ></input>
-                <div onClick={addTodo} style={{ cursor: "pointer" }}>
-                  submit
-                </div>
               </div>
             )}
+
+            <div className={todos.sort}>
+              <div
+                className={todos.sortButton}
+                onClick={() => setTodosArr(initTodosArr)}
+              >
+                all
+              </div>
+              <div
+                className={todos.sortButton}
+                onClick={() => filteredTodos(true)}
+              >
+                completed
+              </div>
+              <div
+                className={todos.sortButton}
+                onClick={() => filteredTodos(false)}
+              >
+                in progress
+              </div>
+            </div>
           </div>
           <div className={styles.grid}>
             {todosArr.map((todo) => {
               return (
-                <section
-                  className={styles.card}
-                  key={uuidv4()}
-                  onClick={() => handleClick(todo)}
-                >
-                  <div className="flex items-center">
+                <section className={styles.card} key={uuidv4()}>
+                  <div
+                    className="flex items-center "
+                    style={{
+                      cursor: "pointer",
+                      padding: "1.75rem",
+                    }}
+                    onClick={() => handleClick(todo)}
+                  >
                     <input
                       type="checkbox"
                       checked={todo.done}
@@ -144,8 +203,13 @@ const Todos = () => {
                       {todo.todo}
                     </label>
                   </div>
-                  <div onClick={() => removeTodo(todo)}>
-                    <FcCancel size={32} className={styles.icon} />
+                  <div className={todos.remove}>
+                    <FcCancel
+                      size={32}
+                      className={styles.icon}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => removeTodo(todo)}
+                    />
                   </div>
                 </section>
               );

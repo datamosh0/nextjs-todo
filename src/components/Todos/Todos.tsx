@@ -5,8 +5,8 @@ import { useRef } from "react";
 import { useAuth } from "../../Hooks/useAuth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { IoIosAddCircle } from "react-icons/Io";
-import { FcCancel } from "react-icons/Fc";
+import { IoIosAddCircle } from "react-icons/io";
+import { FcCancel } from "react-icons/fc";
 import { uuidv4 } from "@firebase/util";
 
 interface Todo {

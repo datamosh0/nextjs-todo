@@ -1,8 +1,8 @@
 interface User {
-  email: string | null;
-  displayName: string | null;
-  photoURL: string | null;
-  uid: string | null;
+  email: ?string;
+  displayName: ?string;
+  photoURL: ?string;
+  uid: ?string;
 }
 
 interface Todo {

@@ -19,6 +19,7 @@ const Todos = ({ passedTodos, listsObj, listShowing }: any) => {
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
 
   const removeTodo = async (todo: Todo) => {
+    sessionStorage.setItem("listShowing", listShowing as string);
     let newTodos: Todo[] = todosArr
       .map((todoObj) => {
         if (todoObj.todo !== todo.todo) return todoObj;
@@ -37,6 +38,7 @@ const Todos = ({ passedTodos, listsObj, listShowing }: any) => {
   };
 
   const handleClick = async (clickedTodo: Todo) => {
+    sessionStorage.setItem("listShowing", listShowing as string);
     let newTodo: Todo = { todo: clickedTodo.todo, done: !clickedTodo.done };
     let newTodos: Todo[] = todosArr.map((todoObj) => {
       if (todoObj.todo === clickedTodo.todo) return newTodo;
@@ -81,59 +83,60 @@ const Todos = ({ passedTodos, listsObj, listShowing }: any) => {
   return (
     <>
       <main>
-        <div className={todos.sort}>
-          {highlightAll ? (
-            <div
-              className={`${todos.sortButton} ${todos.highlightButton}`}
-              onClick={() => filteredTodos(true, true)}
-            >
-              all
-            </div>
-          ) : (
-            <div
-              className={todos.sortButton}
-              onClick={() => filteredTodos(true, true)}
-            >
-              all
-            </div>
-          )}
-          {highlightComplete ? (
-            <div
-              className={`${todos.sortButton} ${todos.highlightButton}`}
-              onClick={() => filteredTodos(true)}
-            >
-              completed
-            </div>
-          ) : (
-            <div
-              className={`${todos.sortButton}`}
-              onClick={() => filteredTodos(true)}
-            >
-              completed
-            </div>
-          )}
-          {highlightUncomplete ? (
-            <div
-              className={`${todos.sortButton} ${todos.highlightButton}`}
-              onClick={() => filteredTodos(false)}
-            >
-              in progress
-            </div>
-          ) : (
-            <div
-              className={todos.sortButton}
-              onClick={() => filteredTodos(false)}
-            >
-              in progress
-            </div>
-          )}
+        <div className={todos.sortContainer}>
+          <div className={todos.sort}>
+            {highlightAll ? (
+              <div
+                className={`${todos.sortButton} ${todos.highlightButton}`}
+                onClick={() => filteredTodos(true, true)}
+              >
+                all
+              </div>
+            ) : (
+              <div
+                className={todos.sortButton}
+                onClick={() => filteredTodos(true, true)}
+              >
+                all
+              </div>
+            )}
+            {highlightComplete ? (
+              <div
+                className={`${todos.sortButton} ${todos.highlightButton}`}
+                onClick={() => filteredTodos(true)}
+              >
+                completed
+              </div>
+            ) : (
+              <div
+                className={`${todos.sortButton}`}
+                onClick={() => filteredTodos(true)}
+              >
+                completed
+              </div>
+            )}
+            {highlightUncomplete ? (
+              <div
+                className={`${todos.sortButton} ${todos.highlightButton}`}
+                onClick={() => filteredTodos(false)}
+              >
+                in progress
+              </div>
+            ) : (
+              <div
+                className={todos.sortButton}
+                onClick={() => filteredTodos(false)}
+              >
+                in progress
+              </div>
+            )}
+          </div>
           <AddTodo
             todosArr={todosArr}
             listsObj={listsObj}
             listShowing={listShowing}
           ></AddTodo>
         </div>
-
         <div className={styles.grid}>
           {todosArr.map((todo) => {
             if (todo.todo === undefined) return;

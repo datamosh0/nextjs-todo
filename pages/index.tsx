@@ -8,7 +8,6 @@ import Login from "../src/components/Login/Login";
 import Lists from "../src/components/Lists/Lists";
 const Home: NextPage = () => {
   const currentUser: User = useAuth();
-
   return (
     <>
       <Head>

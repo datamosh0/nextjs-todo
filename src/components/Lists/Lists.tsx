@@ -19,14 +19,12 @@ import { FiLogOut } from "react-icons/fi";
 import AddList from "./AddList";
 
 const Lists = () => {
-  const [lists, setLists] = useState();
   const [loading, setLoading] = useState<boolean>(true);
   const [listsObj, setListsObj] = useState<any>({});
   const [listShowing, setListShowing] = useState<string>();
   const [todosArr, setTodosArr] = useState<Todo[]>([]);
-  const currentUser = useAuth();
   const dispatch = useDispatch();
-
+  const currentUser = useAuth();
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
 
   const readTodos = async () => {
@@ -34,13 +32,19 @@ const Lists = () => {
     onSnapshot(docRef, (lists) => {
       let docSnap: DocumentData = lists.data()!;
       setListsObj(docSnap);
+      let cachedList = sessionStorage.getItem("listShowing");
       Object.entries(docSnap).map((list, index) => {
-        if (index === 0) {
+        if (cachedList) {
+          if (list[0] === cachedList) {
+            setListShowing(list[0]);
+            setTodosArr(list[1]);
+            sessionStorage.setItem("listShowing", "");
+          }
+        } else if (index === 0) {
           setListShowing(list[0]);
           setTodosArr(list[1] as Todo[]);
         }
       });
-      console.log(docSnap);
       setLoading(false);
     });
   };
@@ -51,20 +55,13 @@ const Lists = () => {
       if (list[0] === newList) {
         setListShowing(list[0]);
         setTodosArr(list[1] as Todo[]);
-        console.log(list[1]);
       }
     });
   };
 
   useEffect(() => {
-    console.log("api called");
     readTodos();
   }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("listShowing", listShowing as string);
-  }, [listShowing]);
-
   return (
     <div>
       <header className={styles.header}>
@@ -86,31 +83,33 @@ const Lists = () => {
       {!loading && (
         <section className={styles.mainSection}>
           <section className={styles.listSection}>
-            <div className={styles.listHeader}>My Lists</div>
             <div>
-              {Object.keys(listsObj).map((list: string) => {
-                let selected = false;
-                if (list === listShowing) selected = true;
-                return (
-                  <div key={list}>
-                    {selected ? (
-                      <div
-                        style={{ background: "#eee", cursor: "pointer" }}
-                        className={styles.listOption}
-                        onClick={changeList}
-                      >
-                        {list}
-                      </div>
-                    ) : (
-                      <div style={{ cursor: "pointer" }} onClick={changeList}>
-                        {list}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+              <div className={styles.listHeader}>My Lists</div>
+              <div>
+                {Object.keys(listsObj).map((list: string) => {
+                  let selected = false;
+                  if (list === listShowing) selected = true;
+                  return (
+                    <div key={list}>
+                      {selected ? (
+                        <div
+                          style={{ background: "#eee", cursor: "pointer" }}
+                          className={styles.listOption}
+                          onClick={changeList}
+                        >
+                          {list}
+                        </div>
+                      ) : (
+                        <div style={{ cursor: "pointer" }} onClick={changeList}>
+                          {list}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <AddList listsObj={listsObj}></AddList>
+            <AddList listsObj={listsObj} listShowing={listShowing}></AddList>
           </section>
           <Todos
             passedTodos={todosArr}

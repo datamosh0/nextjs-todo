@@ -12,6 +12,7 @@ const AddTodo = ({ todosArr, listsObj, listShowing }: any) => {
   const currentUser = useAuth();
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
   const addTodo = async () => {
+    sessionStorage.setItem("listShowing", listShowing as string);
     const newTodo: string = newTodoRef.current.value;
     let returnBool = false;
     todosArr.forEach((todo: Todo) => {
@@ -30,10 +31,11 @@ const AddTodo = ({ todosArr, listsObj, listShowing }: any) => {
   };
   return (
     <div className={styles.description}>
-      <code className={styles.code} onClick={() => setShowInput(!showInput)}>
+      <code className={styles.code}>
         {showInput ? (
-          <div className="flex ">
+          <div className="flex items-center">
             <div
+              onClick={() => setShowInput(false)}
               style={{
                 paddingRight: ".5rem",
                 borderRight: "2px black solid",
@@ -49,30 +51,26 @@ const AddTodo = ({ todosArr, listsObj, listShowing }: any) => {
             >
               submit
             </div>
+            <div className="flex items-center mt-3">
+              <textarea
+                className={todos.addInput}
+                placeholder="press enter to submit"
+                ref={newTodoRef}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") {
+                    addTodo();
+                  }
+                }}
+              ></textarea>
+            </div>
           </div>
         ) : (
-          <div className="flex items-center">
+          <div className="flex items-center" onClick={() => setShowInput(true)}>
             add a todo
             <IoIosAddCircle size={32} className={styles.icon} />
           </div>
         )}
       </code>
-
-      {showInput && (
-        <div className="flex items-center mt-3">
-          <input
-            type="text"
-            className={todos.addInput}
-            placeholder="press enter to submit"
-            ref={newTodoRef}
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                addTodo();
-              }
-            }}
-          ></input>
-        </div>
-      )}
     </div>
   );
 };

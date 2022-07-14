@@ -17,23 +17,27 @@
   margin: 2rem auto;
   min-height: 80vh;
 }
-@media screen and (max-width: 400px) {
-  .mainSection {
-    grid-template-columns: 1fr;
-  }
-}
 .listSection {
   height: inherit;
-  font-size: 1.4rem;
+  font-size: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
 }
 .listHeader {
   font-size: 1.75rem;
   border-bottom: black 2px solid;
 }
 
+@media screen and (max-width: 400px) {
+  .mainSection {
+    grid-template-columns: 1fr;
+  }
+  .mainSection {
+    min-height: min-content;
+  }
+}
 .header {
   width: 90vw;
   display: flex;

@@ -143,11 +143,7 @@ const Todos = ({ passedTodos, listsObj, listShowing }: any) => {
             return (
               <section className={styles.card} key={uuidv4()}>
                 <div
-                  className="flex items-center "
-                  style={{
-                    cursor: "pointer",
-                    padding: "1.75rem",
-                  }}
+                  className={todos.todoMain}
                   onClick={() => handleClick(todo)}
                 >
                   <input
@@ -157,13 +153,9 @@ const Todos = ({ passedTodos, listsObj, listShowing }: any) => {
                     onChange={() => console.log()}
                   ></input>
                   {todo.done ? (
-                    <label className={todos.completed} data-content={todo.todo}>
-                      {todo.todo}
-                    </label>
+                    <label className={todos.completed}>{todo.todo}</label>
                   ) : (
-                    <label className={todos.label} data-content={todo.todo}>
-                      {todo.todo}
-                    </label>
+                    <label className={todos.label}>{todo.todo}</label>
                   )}
                 </div>
                 <div className={todos.remove}>

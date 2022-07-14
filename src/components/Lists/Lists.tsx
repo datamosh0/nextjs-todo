@@ -90,10 +90,14 @@ const Lists = () => {
                   let selected = false;
                   if (list === listShowing) selected = true;
                   return (
-                    <div key={list}>
+                    <div key={list} style={{ overflowWrap: "anywhere" }}>
                       {selected ? (
                         <div
-                          style={{ background: "#eee", cursor: "pointer" }}
+                          style={{
+                            background: "#eee",
+                            cursor: "pointer",
+                            overflowWrap: "anywhere",
+                          }}
                           className={styles.listOption}
                           onClick={changeList}
                         >

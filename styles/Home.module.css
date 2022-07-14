@@ -126,7 +126,7 @@
   width: 100%;
   display: grid;
   grid-template-columns: 90% 10%;
-  margin: 0.5rem;
+  margin: 0.3rem;
 }
 
 .card:hover,

@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.css";
 import Todos from "../src/components/Todos/Todos";
 import { useAuth } from "../src/Hooks/useAuth";
 import Login from "../src/components/Login/Login";
+import Lists from "../src/components/Lists/Lists";
 const Home: NextPage = () => {
   const currentUser: User = useAuth();
 
@@ -19,7 +20,8 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         {currentUser.email ? (
           <div className="flex flex-col items-center">
-            <Todos></Todos>
+            <Lists></Lists>
+            {/* <Todos></Todos> */}
           </div>
         ) : (
           <div>

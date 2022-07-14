@@ -9,3 +9,7 @@ interface Todo {
   todo: string;
   done: boolean;
 }
+interface List {
+  title: string;
+  todo: Todo[];
+}

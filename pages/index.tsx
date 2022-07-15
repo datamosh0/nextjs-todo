@@ -3,7 +3,7 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Todos from "../src/components/Todos/Todos";
-import { useAuth } from "../src/Hooks/useAuth";
+import { useAuth } from "../src/app/useAuth";
 import Login from "../src/components/Login/Login";
 import Lists from "../src/components/Lists/Lists";
 const Home: NextPage = () => {

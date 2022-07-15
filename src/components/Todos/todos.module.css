@@ -5,8 +5,8 @@
   font-size: 1.9rem;
 }
 .addInput {
-  font-size: 0.7rem;
-  width: 6rem;
+  font-size: 0.9rem;
+  width: 100%;
   border: 2px solid black;
   padding: 0.4rem;
   margin: 0.4rem;
@@ -14,7 +14,20 @@
   resize: none;
   overflow: auto;
 }
-
+.addContainer {
+  display: flex;
+  align-items: center;
+}
+.addSubContainer {
+  margin: 1rem;
+  display: flex;
+}
+.codeContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .userImg {
   width: 2.5rem;
   border-radius: 100%;
@@ -118,4 +131,13 @@
   overflow-wrap: anywhere;
   margin-top: 0.35rem;
   padding-left: 0.2rem;
+}
+
+@media screen and (max-width: 1000px) {
+  .addContainer {
+    flex-direction: column;
+  }
+  .addSubContainer {
+    margin-left: 0;
+  }
 }

@@ -30,14 +30,6 @@
   border-bottom: black 2px solid;
 }
 
-@media screen and (max-width: 400px) {
-  .mainSection {
-    grid-template-columns: 1fr;
-  }
-  .mainSection {
-    min-height: min-content;
-  }
-}
 .header {
   width: 90vw;
   display: flex;
@@ -85,18 +77,18 @@
 }
 
 .description {
-  margin: 2rem 0;
+  width: 100%;
+  margin: 1.7rem 0;
   line-height: 1.5;
   font-size: 1.5rem;
   display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .code {
   background: #f0f0f0;
   border-radius: 0.5rem;
   width: 100%;
+  height: fill;
   cursor: pointer;
   padding: 0.5rem;
   margin: -1.5rem 0;
@@ -154,5 +146,14 @@
   .grid {
     width: 100%;
     flex-direction: column;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .mainSection {
+    grid-template-columns: 1fr;
+  }
+  .mainSection {
+    min-height: min-content;
   }
 }

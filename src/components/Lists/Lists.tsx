@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "../../Hooks/useAuth";
+import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "../../app/useAuth";
 import {
   doc,
   getDoc,
@@ -14,8 +14,9 @@ import Todos from "../Todos/Todos";
 import todos from "../Todos/todos.module.css";
 import styles from "../../../styles/Home.module.css";
 import { useDispatch } from "react-redux";
-import { logout } from "../../features/userSlice";
+import { logout } from "../../app/userSlice";
 import { FiLogOut } from "react-icons/fi";
+import { BsTrash } from "react-icons/bs";
 import AddList from "./AddList";
 
 const Lists = () => {
@@ -23,6 +24,7 @@ const Lists = () => {
   const [listsObj, setListsObj] = useState<any>({});
   const [listShowing, setListShowing] = useState<string>();
   const [todosArr, setTodosArr] = useState<Todo[]>([]);
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const dispatch = useDispatch();
   const currentUser = useAuth();
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
@@ -57,6 +59,16 @@ const Lists = () => {
         setTodosArr(list[1] as Todo[]);
       }
     });
+  };
+  const deleteList = async () => {
+    let newLists: any = {};
+    for (const list in listsObj) {
+      if (list !== listShowing) newLists[list] = listsObj[list];
+    }
+    await setDoc(doc(db, "userData", uid), {
+      ...newLists,
+    });
+    setConfirmDelete(false);
   };
 
   useEffect(() => {
@@ -109,12 +121,39 @@ const Lists = () => {
                 })}
               </div>
             </div>
-            <AddList listsObj={listsObj} listShowing={listShowing}></AddList>
+            <div className="flex flex-col">
+              <AddList listsObj={listsObj} listShowing={listShowing!}></AddList>
+              <div className={styles.description}>
+                {confirmDelete ? (
+                  <div style={{ width: "100%" }}>
+                    <code className={styles.code} onClick={deleteList}>
+                      delete list?
+                    </code>
+                    <code
+                      className={styles.code}
+                      style={{ marginTop: "1.8rem" }}
+                      onClick={() => setConfirmDelete(false)}
+                    >
+                      cancel
+                    </code>
+                  </div>
+                ) : (
+                  <code
+                    className={styles.code}
+                    onClick={() => setConfirmDelete(true)}
+                  >
+                    <div className="flex items-center h-full">
+                      <BsTrash size={24} className={styles.icon}></BsTrash>
+                    </div>
+                  </code>
+                )}
+              </div>
+            </div>
           </section>
           <Todos
             passedTodos={todosArr}
             listsObj={listsObj}
-            listShowing={listShowing}
+            listShowing={listShowing!}
           ></Todos>
         </section>
       )}

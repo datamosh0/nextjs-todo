@@ -1,6 +1,6 @@
 import { useEffect, createContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logout, selectUser } from "../features/userSlice";
+import { login, logout, selectUser } from "./userSlice";
 import { auth } from "../firebase";
 
 export const useAuth = (): User => {

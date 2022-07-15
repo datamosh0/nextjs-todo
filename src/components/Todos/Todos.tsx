@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
 import styles from "../../../styles/Home.module.css";
 import todos from "./todos.module.css";
-import { useAuth } from "../../Hooks/useAuth";
+import { useAuth } from "../../app/useAuth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { FcCancel } from "react-icons/fc";
 import { uuidv4 } from "@firebase/util";
 import AddTodo from "./AddTodo";
 
-const Todos = ({ passedTodos, listsObj, listShowing }: any) => {
+const Todos = ({
+  passedTodos,
+  listsObj,
+  listShowing,
+}: {
+  passedTodos: Todo[];
+  listsObj: Object;
+  listShowing: string;
+}) => {
   const [todosArr, setTodosArr] = useState<Todo[]>([]);
   const [initTodosArr, setInitTodosArr] = useState<Todo[]>([]);
   const [highlightAll, setHighlightAll] = useState<boolean>(false);
@@ -75,6 +83,7 @@ const Todos = ({ passedTodos, listsObj, listShowing }: any) => {
     }
     setTodosArr(newTodos);
   };
+
   useEffect(() => {
     setTodosArr(passedTodos);
     setInitTodosArr(passedTodos);

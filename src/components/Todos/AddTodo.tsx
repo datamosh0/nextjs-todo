@@ -3,7 +3,7 @@ import styles from "../../../styles/Home.module.css";
 import todos from "./todos.module.css";
 import { IoIosAddCircle } from "react-icons/io";
 import { setDoc, doc } from "firebase/firestore";
-import { useAuth } from "../../Hooks/useAuth";
+import { useAuth } from "../../app/useAuth";
 import { db } from "../../firebase";
 
 const AddTodo = ({ todosArr, listsObj, listShowing }: any) => {
@@ -18,7 +18,10 @@ const AddTodo = ({ todosArr, listsObj, listShowing }: any) => {
     todosArr.forEach((todo: Todo) => {
       if (todo.todo === newTodo) returnBool = true;
     });
-    if (returnBool || newTodo === "") return;
+    if (returnBool || newTodo === "") {
+      setShowInput(false);
+      return;
+    }
     let newTodos: Todo[] = [...todosArr, { todo: newTodo, done: false }];
     let newLists: any = listsObj;
     for (const list in newLists) {
@@ -31,46 +34,49 @@ const AddTodo = ({ todosArr, listsObj, listShowing }: any) => {
   };
   return (
     <div className={styles.description}>
-      <code className={styles.code}>
-        {showInput ? (
-          <div className="flex items-center">
-            <div
-              onClick={() => setShowInput(false)}
-              style={{
-                paddingRight: ".5rem",
-                borderRight: "2px black solid",
+      {showInput ? (
+        <code className={styles.code}>
+          <div className={todos.addContainer}>
+            <textarea
+              className={todos.addInput}
+              style={{ minWidth: "260px" }}
+              placeholder="press enter to submit"
+              ref={newTodoRef}
+              onKeyUp={(e) => {
+                if (e.key === "Enter") {
+                  addTodo();
+                }
               }}
-            >
-              cancel
-            </div>
-            <div
-              onClick={addTodo}
-              style={{
-                paddingLeft: ".5rem",
-              }}
-            >
-              submit
-            </div>
-            <div className="flex items-center mt-3">
-              <textarea
-                className={todos.addInput}
-                placeholder="press enter to submit"
-                ref={newTodoRef}
-                onKeyUp={(e) => {
-                  if (e.key === "Enter") {
-                    addTodo();
-                  }
+            ></textarea>
+            <div className={todos.addSubContainer}>
+              <div
+                onClick={addTodo}
+                style={{
+                  paddingRight: ".5rem",
+                  borderRight: "2px black solid",
                 }}
-              ></textarea>
+              >
+                submit
+              </div>
+              <div
+                onClick={() => setShowInput(false)}
+                style={{
+                  paddingLeft: ".5rem",
+                }}
+              >
+                cancel
+              </div>
             </div>
           </div>
-        ) : (
-          <div className="flex items-center" onClick={() => setShowInput(true)}>
+        </code>
+      ) : (
+        <code className={styles.code} onClick={() => setShowInput(true)}>
+          <div className="flex items-center">
             add a todo
-            <IoIosAddCircle size={32} className={styles.icon} />
+            <IoIosAddCircle size={24} className={styles.icon} />
           </div>
-        )}
-      </code>
+        </code>
+      )}
     </div>
   );
 };

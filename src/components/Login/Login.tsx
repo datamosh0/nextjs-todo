@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { login } from "../../features/userSlice";
+import { login } from "../../app/userSlice";
 import { signInWithPopup, updateCurrentUser } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 import styles from "../../../styles/Home.module.css";

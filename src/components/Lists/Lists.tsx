@@ -21,12 +21,12 @@ import AddList from "./AddList";
 
 const Lists = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [listsObj, setListsObj] = useState<any>({});
+  const [listsObj, setListsObj] = useState<DocumentData>({});
   const [listShowing, setListShowing] = useState<string>();
   const [todosArr, setTodosArr] = useState<Todo[]>([]);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const currentUser = useAuth();
+  const currentUser = useAuth() as User;
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
 
   const readTodos = async () => {
@@ -34,7 +34,7 @@ const Lists = () => {
     onSnapshot(docRef, (lists) => {
       let docSnap: DocumentData = lists.data()!;
       setListsObj(docSnap);
-      let cachedList = sessionStorage.getItem("listShowing");
+      let cachedList: string | null = sessionStorage.getItem("listShowing");
       Object.entries(docSnap).map((list, index) => {
         if (cachedList) {
           if (list[0] === cachedList) {
@@ -52,7 +52,7 @@ const Lists = () => {
   };
 
   const changeList = (e: React.MouseEvent<HTMLDivElement>) => {
-    let newList = e.currentTarget.textContent;
+    let newList: string | null = e.currentTarget.textContent;
     Object.entries(listsObj).map((list) => {
       if (list[0] === newList) {
         setListShowing(list[0]);
@@ -61,7 +61,7 @@ const Lists = () => {
     });
   };
   const deleteList = async () => {
-    let newLists: any = {};
+    let newLists: DocumentData = {};
     for (const list in listsObj) {
       if (list !== listShowing) newLists[list] = listsObj[list];
     }

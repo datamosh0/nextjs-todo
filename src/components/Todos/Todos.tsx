@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "../../../styles/Home.module.css";
 import todos from "./todos.module.css";
 import { useAuth } from "../../app/useAuth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, DocumentData, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { FcCancel } from "react-icons/fc";
 import { uuidv4 } from "@firebase/util";
@@ -14,7 +14,7 @@ const Todos = ({
   listShowing,
 }: {
   passedTodos: Todo[];
-  listsObj: Object;
+  listsObj: DocumentData;
   listShowing: string;
 }) => {
   const [todosArr, setTodosArr] = useState<Todo[]>([]);
@@ -29,13 +29,13 @@ const Todos = ({
   const removeTodo = async (todo: Todo) => {
     sessionStorage.setItem("listShowing", listShowing as string);
     let newTodos: Todo[] = todosArr
-      .map((todoObj) => {
+      .map((todoObj: Todo) => {
         if (todoObj.todo !== todo.todo) return todoObj;
       })
       .filter((todo) => {
         if (todo !== undefined) return todo;
       }) as Todo[];
-    let newLists: any = listsObj;
+    let newLists: DocumentData = listsObj;
     for (const list in newLists) {
       if (list === listShowing) newLists[list] = newTodos;
     }
@@ -52,7 +52,7 @@ const Todos = ({
       if (todoObj.todo === clickedTodo.todo) return newTodo;
       else return todoObj;
     });
-    let newLists: any = listsObj;
+    let newLists: DocumentData = listsObj;
     for (const list in newLists) {
       if (list === listShowing) newLists[list] = newTodos;
     }
@@ -71,7 +71,7 @@ const Todos = ({
       return;
     }
     let newTodos: Todo[] = [];
-    initTodosArr.forEach((todo) => {
+    initTodosArr.forEach((todo: Todo) => {
       if (todo.done === true && completed) newTodos.push(todo);
       if (todo.done !== true && !completed) newTodos.push(todo);
     });
@@ -91,7 +91,9 @@ const Todos = ({
 
   return (
     <>
-      <main>
+      <main
+        style={{ maxHeight: "82vh", overflowY: "scroll", overflowX: "hidden" }}
+      >
         <div className={todos.sortContainer}>
           <div className={todos.sort}>
             {highlightAll ? (

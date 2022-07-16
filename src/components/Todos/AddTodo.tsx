@@ -2,35 +2,40 @@ import React, { useState, useRef } from "react";
 import styles from "../../../styles/Home.module.css";
 import todos from "./todos.module.css";
 import { IoIosAddCircle } from "react-icons/io";
-import { setDoc, doc } from "firebase/firestore";
+import { setDoc, doc, DocumentData } from "firebase/firestore";
 import { useAuth } from "../../app/useAuth";
 import { db } from "../../firebase";
 
-const AddTodo = ({ todosArr, listsObj, listShowing }: any) => {
+const AddTodo = ({
+  todosArr,
+  listsObj,
+  listShowing,
+}: {
+  todosArr: Todo[];
+  listsObj: DocumentData;
+  listShowing: string;
+}) => {
   const [showInput, setShowInput] = useState<boolean>(false);
-  const newTodoRef: React.MutableRefObject<any> = useRef();
+  const newTodoRef = useRef() as React.MutableRefObject<HTMLTextAreaElement>;
   const currentUser = useAuth();
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
   const addTodo = async () => {
     sessionStorage.setItem("listShowing", listShowing as string);
-    const newTodo: string = newTodoRef.current.value;
+    setShowInput(false);
+    const newTodo: string = newTodoRef.current!.value;
     let returnBool = false;
     todosArr.forEach((todo: Todo) => {
       if (todo.todo === newTodo) returnBool = true;
     });
-    if (returnBool || newTodo === "") {
-      setShowInput(false);
-      return;
-    }
+    if (returnBool || newTodo === "") return;
     let newTodos: Todo[] = [...todosArr, { todo: newTodo, done: false }];
-    let newLists: any = listsObj;
+    let newLists: DocumentData = listsObj;
     for (const list in newLists) {
       if (list === listShowing) newLists[list] = newTodos;
     }
     await setDoc(doc(db, "userData", uid), {
       ...newLists,
     });
-    setShowInput(false);
   };
   return (
     <div className={styles.description}>

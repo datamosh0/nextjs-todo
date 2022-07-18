@@ -26,15 +26,7 @@ const Todos = ({
   const currentUser = useAuth();
   const uid: string = currentUser.uid !== null ? currentUser.uid : "";
 
-  const removeTodo = async (todo: Todo) => {
-    sessionStorage.setItem("listShowing", listShowing as string);
-    let newTodos: Todo[] = todosArr
-      .map((todoObj: Todo) => {
-        if (todoObj.todo !== todo.todo) return todoObj;
-      })
-      .filter((todo) => {
-        if (todo !== undefined) return todo;
-      }) as Todo[];
+  const updateDB = async (newTodos: Todo[]) => {
     let newLists: DocumentData = listsObj;
     for (const list in newLists) {
       if (list === listShowing) newLists[list] = newTodos;
@@ -45,6 +37,18 @@ const Todos = ({
     });
   };
 
+  const removeTodo = async (todo: Todo) => {
+    sessionStorage.setItem("listShowing", listShowing as string);
+    let newTodos: Todo[] = todosArr
+      .map((todoObj: Todo) => {
+        if (todoObj.todo !== todo.todo) return todoObj;
+      })
+      .filter((todo) => {
+        if (todo !== undefined) return todo;
+      }) as Todo[];
+    updateDB(newTodos);
+  };
+
   const handleClick = async (clickedTodo: Todo) => {
     sessionStorage.setItem("listShowing", listShowing as string);
     let newTodo: Todo = { todo: clickedTodo.todo, done: !clickedTodo.done };
@@ -52,14 +56,7 @@ const Todos = ({
       if (todoObj.todo === clickedTodo.todo) return newTodo;
       else return todoObj;
     });
-    let newLists: DocumentData = listsObj;
-    for (const list in newLists) {
-      if (list === listShowing) newLists[list] = newTodos;
-    }
-
-    await setDoc(doc(db, "userData", uid), {
-      ...newLists,
-    });
+    updateDB(newTodos);
   };
 
   const filteredTodos = (completed: boolean, init: boolean = false) => {
@@ -90,99 +87,74 @@ const Todos = ({
   }, [passedTodos]);
 
   return (
-    <>
-      <main
-        style={{ maxHeight: "82vh", overflowY: "scroll", overflowX: "hidden" }}
-      >
-        <div className={todos.sortContainer}>
-          <div className={todos.sort}>
-            {highlightAll ? (
-              <div
-                className={`${todos.sortButton} ${todos.highlightButton}`}
-                onClick={() => filteredTodos(true, true)}
-              >
-                all
-              </div>
-            ) : (
-              <div
-                className={todos.sortButton}
-                onClick={() => filteredTodos(true, true)}
-              >
-                all
-              </div>
-            )}
-            {highlightComplete ? (
-              <div
-                className={`${todos.sortButton} ${todos.highlightButton}`}
-                onClick={() => filteredTodos(true)}
-              >
-                completed
-              </div>
-            ) : (
-              <div
-                className={`${todos.sortButton}`}
-                onClick={() => filteredTodos(true)}
-              >
-                completed
-              </div>
-            )}
-            {highlightUncomplete ? (
-              <div
-                className={`${todos.sortButton} ${todos.highlightButton}`}
-                onClick={() => filteredTodos(false)}
-              >
-                in progress
-              </div>
-            ) : (
-              <div
-                className={todos.sortButton}
-                onClick={() => filteredTodos(false)}
-              >
-                in progress
-              </div>
-            )}
+    <main
+      style={{ maxHeight: "82vh", overflowY: "scroll", overflowX: "hidden" }}
+    >
+      <div className={todos.sortContainer}>
+        <div className={todos.sort}>
+          <div
+            className={`${todos.sortButton} ${
+              highlightAll ? `{${todos.highlightButton}}` : ""
+            }`}
+            onClick={() => filteredTodos(true, true)}
+          >
+            all
           </div>
-          <AddTodo
-            todosArr={todosArr}
-            listsObj={listsObj}
-            listShowing={listShowing}
-          ></AddTodo>
+          <div
+            className={`${todos.sortButton} ${
+              highlightComplete ? `{${todos.highlightButton}}` : ""
+            }`}
+            onClick={() => filteredTodos(true)}
+          >
+            completed
+          </div>
+          <div
+            className={`${todos.sortButton} ${
+              highlightUncomplete ? `{${todos.highlightButton}}` : ""
+            }`}
+            onClick={() => filteredTodos(false)}
+          >
+            in progress
+          </div>
         </div>
-        <div className={styles.grid}>
-          {todosArr.map((todo) => {
-            if (todo.todo === undefined) return;
-            return (
-              <section className={styles.card} key={uuidv4()}>
-                <div
-                  className={todos.todoMain}
-                  onClick={() => handleClick(todo)}
-                >
-                  <input
-                    type="checkbox"
-                    checked={todo.done}
-                    className={todos.input}
-                    onChange={() => console.log()}
-                  ></input>
-                  {todo.done ? (
-                    <label className={todos.completed}>{todo.todo}</label>
-                  ) : (
-                    <label className={todos.label}>{todo.todo}</label>
-                  )}
-                </div>
-                <div className={todos.remove}>
-                  <FcCancel
-                    size={32}
-                    className={styles.icon}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => removeTodo(todo)}
-                  />
-                </div>
-              </section>
-            );
-          })}
-        </div>
-      </main>
-    </>
+        <AddTodo
+          todosArr={todosArr}
+          listsObj={listsObj}
+          listShowing={listShowing}
+          updateDB={updateDB}
+        ></AddTodo>
+      </div>
+      <div className={styles.grid}>
+        {todosArr.map((todo) => {
+          if (todo.todo === undefined) return;
+          return (
+            <section className={styles.card} key={uuidv4()}>
+              <div className={todos.todoMain} onClick={() => handleClick(todo)}>
+                <input
+                  type="checkbox"
+                  checked={todo.done}
+                  className={todos.input}
+                  onChange={() => console.log()}
+                ></input>
+                {todo.done ? (
+                  <label className={todos.completed}>{todo.todo}</label>
+                ) : (
+                  <label className={todos.label}>{todo.todo}</label>
+                )}
+              </div>
+              <div className={todos.remove}>
+                <FcCancel
+                  size={32}
+                  className={styles.icon}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => removeTodo(todo)}
+                />
+              </div>
+            </section>
+          );
+        })}
+      </div>
+    </main>
   );
 };
 

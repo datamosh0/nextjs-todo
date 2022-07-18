@@ -10,10 +10,12 @@ const AddTodo = ({
   todosArr,
   listsObj,
   listShowing,
+  updateDB,
 }: {
   todosArr: Todo[];
   listsObj: DocumentData;
   listShowing: string;
+  updateDB: Function;
 }) => {
   const [showInput, setShowInput] = useState<boolean>(false);
   const newTodoRef = useRef() as React.MutableRefObject<HTMLTextAreaElement>;
@@ -29,13 +31,8 @@ const AddTodo = ({
     });
     if (returnBool || newTodo === "") return;
     let newTodos: Todo[] = [...todosArr, { todo: newTodo, done: false }];
-    let newLists: DocumentData = listsObj;
-    for (const list in newLists) {
-      if (list === listShowing) newLists[list] = newTodos;
-    }
-    await setDoc(doc(db, "userData", uid), {
-      ...newLists,
-    });
+
+    updateDB(newTodos);
   };
   return (
     <div className={styles.description}>

@@ -33,6 +33,7 @@ const Lists = () => {
     const docRef: DocumentReference<DocumentData> = doc(db, "userData", uid);
     onSnapshot(docRef, (lists) => {
       let docSnap: DocumentData = lists.data()!;
+      if (Object.keys(docSnap).length === 0) docSnap = { "My Todos": [{}] };
       setListsObj(docSnap);
       let cachedList: string | null = sessionStorage.getItem("listShowing");
       Object.entries(docSnap).map((list, index) => {
